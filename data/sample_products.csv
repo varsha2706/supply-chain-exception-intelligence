@@ -1,0 +1,16 @@
+product_id,product_name,category,unit_cost,reorder_point,safety_stock,daily_demand_rate
+SKU-1001,High-Precision Microcontroller IC,Semiconductors,45.5,150,50,22.5
+SKU-1002,Lithium-Ion Battery Pack 48V,Energy Storage,280.0,80,25,12.0
+SKU-1003,Hydraulic Pressure Sensor Module,Industrial Automation,65.0,120,40,15.5
+SKU-1004,Optical Fiber Transceiver 100G,Networking,110.0,100,30,14.0
+SKU-1005,Automotive Brake Caliper Assembly,Automotive Parts,145.0,75,20,8.5
+SKU-1006,Industrial Servo Motor 750W,Robotics & Motors,320.0,50,15,6.0
+SKU-1007,Stainless Steel Ball Bearing 6205,Mechanical Components,12.5,500,150,65.0
+SKU-1008,Pharmaceutical Sterile Glass Vials,Healthcare & Pharma,3.2,2000,600,250.0
+SKU-1009,Thermal Interface Silicone Pad,Thermal Management,8.75,400,100,45.0
+SKU-1010,Programmable Logic Controller (PLC),Industrial Automation,550.0,30,10,4.2
+SKU-1011,Aluminum Alloy Extrusion 4040,Structural Hardware,24.0,350,100,38.0
+SKU-1012,Brushless DC Motor Controller,Robotics & Motors,95.0,110,35,16.5
+SKU-1013,Titanium Fastener Bolt M8x50,Fasteners & Fixings,4.5,1200,400,180.0
+SKU-1014,Medical Grade PVC Tubing 50m,Healthcare & Pharma,35.0,150,45,18.0
+SKU-1015,High-Speed Networking Router ASIC,Semiconductors,210.0,60,20,9.0

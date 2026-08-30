@@ -1,0 +1,5 @@
+warehouse_id,warehouse_name,location,capacity_units,current_utilization_pct
+WH-EAST,Eastern Regional Distribution Center,"Newark, NJ",50000,82.5
+WH-WEST,Pacific Logistics Hub,"Oakland, CA",65000,74.0
+WH-CENTRAL,Midwest Fulfillment Center,"Chicago, IL",45000,91.2
+WH-SOUTH,Southern Gateway Depot,"Dallas, TX",40000,68.0

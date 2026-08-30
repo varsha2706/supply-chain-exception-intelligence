@@ -1,0 +1,11 @@
+supplier_id,supplier_name,category,stated_lead_time_days,country,reliability_rating
+SUP-001,Apex Microelectronics Corp,Semiconductors,10,Taiwan,4.8
+SUP-002,VoltPower Energy Systems,Energy Storage,15,South Korea,4.2
+SUP-003,Precision Sensor Tech AG,Industrial Automation,7,Germany,4.9
+SUP-004,OptiWave Photonics Ltd,Networking,12,Japan,3.7
+SUP-005,TransAuto Components LLC,Automotive Parts,14,USA,4.1
+SUP-006,DynoDrive Motion Corp,Robotics & Motors,18,Germany,4.6
+SUP-007,TitaniumForge Global Ltd,Mechanical Components,8,India,4.7
+SUP-008,BioPharma Containment Inc,Healthcare & Pharma,6,Switzerland,4.9
+SUP-009,Nordic Thermal Solutions,Thermal Management,9,Sweden,3.5
+SUP-010,GlobalFast Metalworks,Fasteners & Fixings,5,Vietnam,4.4
