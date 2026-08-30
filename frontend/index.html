@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supply Chain Exception Intelligence Assistant</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body class="bg-slate-50 min-h-screen flex flex-col antialiased text-slate-800 custom-scrollbar">
+
+    <!-- Top Navigation Bar -->
+    <header class="glass-header sticky top-0 z-40 px-6 py-3.5 shadow-sm">
+        <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center text-white shadow-md shadow-blue-500/20">
+                    <i data-lucide="boxes" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <h1 class="text-base font-bold text-slate-900 leading-tight">Supply Chain Exception Intelligence</h1>
+                    <p class="text-xs text-slate-500 font-medium">Deterministic Analytics &bull; GenAI Root-Cause &bull; Action Engine</p>
+                </div>
+            </div>
+
+            <!-- Global Action Bar -->
+            <div class="flex items-center gap-2">
+                <button id="global-run-analytics-btn" class="px-3.5 py-1.5 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-lg shadow-sm transition-all flex items-center gap-1.5">
+                    <i data-lucide="play-circle" class="w-4 h-4"></i> Run Analytics
+                </button>
+            </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <div class="max-w-7xl mx-auto mt-3 border-t border-slate-100 pt-2 flex space-x-1 sm:space-x-4 text-xs font-medium overflow-x-auto custom-scrollbar">
+            <button id="tab-btn-dashboard" class="px-3 py-2 text-blue-600 border-b-2 border-blue-600 font-semibold flex items-center gap-1.5">
+                <i data-lucide="layout-dashboard" class="w-4 h-4"></i> Dashboard
+            </button>
+            <button id="tab-btn-exceptions" class="px-3 py-2 text-slate-500 hover:text-slate-800 flex items-center gap-1.5">
+                <i data-lucide="alert-triangle" class="w-4 h-4"></i> Exception Queue
+            </button>
+            <button id="tab-btn-suppliers" class="px-3 py-2 text-slate-500 hover:text-slate-800 flex items-center gap-1.5">
+                <i data-lucide="truck" class="w-4 h-4"></i> Supplier Benchmark
+            </button>
+            <button id="tab-btn-forecast" class="px-3 py-2 text-slate-500 hover:text-slate-800 flex items-center gap-1.5">
+                <i data-lucide="trending-down" class="w-4 h-4"></i> 7-Day Stockout Forecaster
+            </button>
+            <button id="tab-btn-query" class="px-3 py-2 text-slate-500 hover:text-slate-800 flex items-center gap-1.5">
+                <i data-lucide="bot" class="w-4 h-4"></i> NL Assistant (AI)
+            </button>
+            <button id="tab-btn-upload" class="px-3 py-2 text-slate-500 hover:text-slate-800 flex items-center gap-1.5">
+                <i data-lucide="upload-cloud" class="w-4 h-4"></i> Data Ingestion
+            </button>
+            <button id="tab-btn-settings" class="px-3 py-2 text-slate-500 hover:text-slate-800 flex items-center gap-1.5">
+                <i data-lucide="settings" class="w-4 h-4"></i> Settings
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="max-w-7xl mx-auto w-full px-6 py-6 flex-1">
+
+        <!-- VIEW: DASHBOARD -->
+        <div id="view-dashboard" class="space-y-6">
+            <!-- KPI Grid -->
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                <div class="kpi-card bg-white p-4 rounded-xl shadow-sm">
+                    <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Inventory Value</span>
+                    <div id="kpi-total-val" class="text-lg font-bold text-slate-900 mt-1">$0.00</div>
+                    <span class="text-xs text-emerald-600 font-medium">On-hand Capital</span>
+                </div>
+                <div class="kpi-card bg-white p-4 rounded-xl shadow-sm">
+                    <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Out of Stock</span>
+                    <div id="kpi-out-stock" class="text-lg font-bold text-red-600 mt-1">0</div>
+                    <span class="text-xs text-red-500 font-medium">Zero on-hand</span>
+                </div>
+                <div class="kpi-card bg-white p-4 rounded-xl shadow-sm">
+                    <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Safety Breaches</span>
+                    <div id="kpi-safety-breach" class="text-lg font-bold text-amber-600 mt-1">0</div>
+                    <span class="text-xs text-amber-600 font-medium">&lt; Safety Buffer</span>
+                </div>
+                <div class="kpi-card bg-white p-4 rounded-xl shadow-sm">
+                    <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Delayed Orders</span>
+                    <div id="kpi-delayed-orders" class="text-lg font-bold text-red-600 mt-1">0</div>
+                    <span class="text-xs text-red-500 font-medium">Past promised date</span>
+                </div>
+                <div class="kpi-card bg-white p-4 rounded-xl shadow-sm">
+                    <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Critical Alerts</span>
+                    <div id="kpi-crit-exceptions" class="text-lg font-bold text-purple-600 mt-1">0</div>
+                    <span class="text-xs text-purple-500 font-medium">Immediate Action</span>
+                </div>
+                <div class="kpi-card bg-white p-4 rounded-xl shadow-sm">
+                    <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Average OTIF</span>
+                    <div id="kpi-avg-otif" class="text-lg font-bold text-blue-600 mt-1">0%</div>
+                    <span class="text-xs text-blue-500 font-medium">Supplier Fulfillment</span>
+                </div>
+            </div>
+
+            <!-- Charts & Operational Status -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex flex-col">
+                    <h3 class="text-sm font-bold text-slate-800 mb-3 flex items-center gap-1.5">
+                        <i data-lucide="pie-chart" class="w-4 h-4 text-blue-600"></i> Stock Health Distribution
+                    </h3>
+                    <div class="flex-1 relative h-56">
+                        <canvas id="stockStatusChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm lg:col-span-2 flex flex-col justify-between">
+                    <div>
+                        <h3 class="text-sm font-bold text-slate-800 mb-2 flex items-center gap-1.5">
+                            <i data-lucide="sparkles" class="w-4 h-4 text-blue-600"></i> Supply Chain Intelligence Overview
+                        </h3>
+                        <p class="text-xs text-slate-600 leading-relaxed mb-4">
+                            The deterministic engine processes multi-facility inventory positions, orders in transit, and vendor lead times. GenAI enriches detected exceptions with root causes and prescribed remediation workflows.
+                        </p>
+                        
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                            <div class="p-3 bg-slate-50 rounded-lg border border-slate-200">
+                                <span class="font-bold text-slate-700">7-Day Stockout Protection:</span>
+                                <p class="text-slate-500 mt-0.5">Continuous demand run-rate forecasting flags SKUs with under 7 days of supply remaining.</p>
+                            </div>
+                            <div class="p-3 bg-slate-50 rounded-lg border border-slate-200">
+                                <span class="font-bold text-slate-700">Supplier OTIF Benchmarking:</span>
+                                <p class="text-slate-500 mt-0.5">Calculates On-Time In-Full ratios and lead-time drift per vendor to optimize procurement.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
+                        <span class="text-slate-400">Deterministic Guardrail: Calculations computed in Python/Pandas</span>
+                        <button onclick="document.getElementById('tab-btn-exceptions').click()" class="text-blue-600 font-semibold hover:underline flex items-center gap-1">
+                            View Exception Queue &rarr;
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIEW: EXCEPTION QUEUE -->
+        <div id="view-exceptions" class="hidden space-y-4">
+            <!-- Filter Bar -->
+            <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-wrap items-center justify-between gap-3">
+                <div class="flex flex-wrap items-center gap-3">
+                    <div>
+                        <label class="text-xs font-semibold text-slate-500 block mb-1">Severity</label>
+                        <select id="filter-severity" onchange="loadExceptions()" class="text-xs border border-slate-200 rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-1 focus:ring-blue-500 bg-slate-50">
+                            <option value="ALL">All Severities</option>
+                            <option value="CRITICAL">Critical</option>
+                            <option value="HIGH">High</option>
+                            <option value="MEDIUM">Medium</option>
+                            <option value="LOW">Low</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="text-xs font-semibold text-slate-500 block mb-1">Exception Category</label>
+                        <select id="filter-type" onchange="loadExceptions()" class="text-xs border border-slate-200 rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-1 focus:ring-blue-500 bg-slate-50">
+                            <option value="ALL">All Categories</option>
+                            <option value="OUT_OF_STOCK">Out of Stock</option>
+                            <option value="SAFETY_STOCK_BREACH">Safety Stock Breach</option>
+                            <option value="ORDER_DELIVERY_DELAY">Order Delivery Delay</option>
+                            <option value="7DAY_STOCKOUT_PREDICTION">7-Day Stockout Risk</option>
+                            <option value="REORDER_POINT_TRIGGERED">Reorder Triggered</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="w-full sm:w-64">
+                    <label class="text-xs font-semibold text-slate-500 block mb-1">Search</label>
+                    <div class="relative">
+                        <input id="search-exceptions" oninput="loadExceptions()" type="text" placeholder="Search product, warehouse..." class="w-full text-xs border border-slate-200 rounded-lg pl-8 pr-3 py-1.5 focus:outline-none focus:ring-1 focus:ring-blue-500 bg-slate-50">
+                        <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Exception Cards Container -->
+            <div id="exceptions-container" class="space-y-4">
+                <!-- Dynamically populated -->
+            </div>
+        </div>
+
+        <!-- VIEW: SUPPLIER BENCHMARKS -->
+        <div id="view-suppliers" class="hidden space-y-6">
+            <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+                <h3 class="text-sm font-bold text-slate-800 mb-4 flex items-center gap-1.5">
+                    <i data-lucide="bar-chart-2" class="w-4 h-4 text-blue-600"></i> Supplier Performance & OTIF Comparison
+                </h3>
+                <div class="h-64 relative">
+                    <canvas id="supplierOtifChart"></canvas>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+                <div class="p-4 border-b border-slate-100 bg-slate-50 flex items-center justify-between">
+                    <h3 class="text-sm font-bold text-slate-800">Supplier Benchmark Scorecard</h3>
+                    <span class="text-xs text-slate-500">Deterministic metrics computed from order receipts</span>
+                </div>
+                <div class="overflow-x-auto custom-scrollbar">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-100/70 text-xs font-semibold text-slate-600 border-b border-slate-200">
+                                <th class="p-3">Supplier Name & Category</th>
+                                <th class="p-3 text-center">Total Orders</th>
+                                <th class="p-3 text-center">Delayed Orders</th>
+                                <th class="p-3 text-center">OTIF %</th>
+                                <th class="p-3 text-center">Stated vs Actual Lead Time</th>
+                                <th class="p-3 text-center">Lead Time Drift</th>
+                                <th class="p-3 text-center">Reliability Score</th>
+                                <th class="p-3 text-center">Risk Tier</th>
+                            </tr>
+                        </thead>
+                        <tbody id="suppliers-table-body">
+                            <!-- Populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIEW: 7-DAY FORECAST -->
+        <div id="view-forecast" class="hidden space-y-4">
+            <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                <div class="flex items-center gap-2 text-blue-600 font-bold text-sm mb-1">
+                    <i data-lucide="sparkles" class="w-4 h-4"></i> 7-Day Predictive Stockout Run-Rate Model (Advanced Extension)
+                </div>
+                <p class="text-xs text-slate-500 leading-relaxed">
+                    Evaluates current on-hand inventory, reserved stock, confirmed inbound shipments, and average daily consumption rate to forecast impending stockouts before they affect production.
+                </p>
+            </div>
+
+            <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+                <div class="overflow-x-auto custom-scrollbar">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-100/70 text-xs font-semibold text-slate-600 border-b border-slate-200">
+                                <th class="p-3">Product Name</th>
+                                <th class="p-3">Warehouse Location</th>
+                                <th class="p-3 text-center">Current Stock</th>
+                                <th class="p-3 text-center">Daily Velocity</th>
+                                <th class="p-3 text-center">Days of Supply</th>
+                                <th class="p-3 text-center">Projected Stockout</th>
+                                <th class="p-3 text-center">7D Shortage Units</th>
+                                <th class="p-3 text-center">Risk Level</th>
+                            </tr>
+                        </thead>
+                        <tbody id="forecast-table-body">
+                            <!-- Populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIEW: NATURAL LANGUAGE ASSISTANT (CHAT) -->
+        <div id="view-query" class="hidden space-y-4">
+            <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4 flex flex-col h-[600px]">
+                <div class="border-b border-slate-100 pb-3 mb-3 flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <div class="w-8 h-8 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center">
+                            <i data-lucide="bot" class="w-4 h-4"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-sm font-bold text-slate-800">Supply Chain Operations Intelligence Assistant</h3>
+                            <p class="text-xs text-slate-400">Ask any question grounded in deterministic inventory & order data</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Prompt Suggestions -->
+                <div class="flex flex-wrap gap-2 mb-3">
+                    <button data-query="Which products are likely to face stock shortages in the next seven days and why?" class="quick-query-btn text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1 rounded-full transition-colors flex items-center gap-1">
+                        <i data-lucide="alert-circle" class="w-3 h-3 text-amber-600"></i> Which products face shortages in next 7 days?
+                    </button>
+                    <button data-query="Which supplier has the highest delay rate and impact on operations?" class="quick-query-btn text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1 rounded-full transition-colors flex items-center gap-1">
+                        <i data-lucide="truck" class="w-3 h-3 text-blue-600"></i> Which supplier has the highest delay rate?
+                    </button>
+                    <button data-query="What is the total value of stock at risk across all warehouses?" class="quick-query-btn text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1 rounded-full transition-colors flex items-center gap-1">
+                        <i data-lucide="dollar-sign" class="w-3 h-3 text-emerald-600"></i> Total inventory value and capital at risk?
+                    </button>
+                </div>
+
+                <!-- Chat Messages Scroll Area -->
+                <div id="chat-messages" class="flex-1 overflow-y-auto custom-scrollbar pr-2 space-y-3">
+                    <div class="flex justify-start mb-4">
+                        <div class="chat-bubble-ai max-w-2xl p-4 rounded-2xl rounded-tl-sm text-sm shadow-sm">
+                            <p class="text-slate-800">
+                                <strong>Hello! I am your Supply Chain Exception Intelligence Assistant.</strong><br>
+                                I continuously analyze stock levels, lead-time variances, and purchase orders. Ask me anything about stockout forecasts, supplier delays, or recommended corrective actions.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chat Input Box -->
+                <div class="pt-3 border-t border-slate-100 flex gap-2">
+                    <input id="chat-query-input" type="text" placeholder="Type your supply chain query here... (e.g. Which products are running low?)" class="flex-1 text-sm border border-slate-200 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-slate-50">
+                    <button id="chat-send-btn" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm font-semibold transition-colors flex items-center gap-1.5 shadow-sm">
+                        <span>Send</span> <i data-lucide="send" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIEW: DATA INGESTION (CSV UPLOAD) -->
+        <div id="view-upload" class="hidden space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- CSV Upload Box -->
+                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+                    <h3 class="text-sm font-bold text-slate-800 mb-2 flex items-center gap-1.5">
+                        <i data-lucide="upload-cloud" class="w-4 h-4 text-blue-600"></i> Upload Operational CSV Data
+                    </h3>
+                    <p class="text-xs text-slate-500 mb-4">
+                        Upload custom CSV operational datasets to update inventory, orders, suppliers, or products.
+                    </p>
+
+                    <form id="csv-upload-form" class="space-y-4">
+                        <div>
+                            <label class="text-xs font-semibold text-slate-600 block mb-1">Target Entity / Dataset</label>
+                            <select id="csv-type-select" class="w-full text-xs border border-slate-200 rounded-lg p-2 bg-slate-50 focus:outline-none focus:ring-1 focus:ring-blue-500">
+                                <option value="orders">Orders (orders.csv)</option>
+                                <option value="inventory">Inventory (inventory.csv)</option>
+                                <option value="products">Products (products.csv)</option>
+                                <option value="suppliers">Suppliers (suppliers.csv)</option>
+                                <option value="warehouses">Warehouses (warehouses.csv)</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="text-xs font-semibold text-slate-600 block mb-1">Select CSV File</label>
+                            <input id="csv-file-input" type="file" accept=".csv" class="w-full text-xs border border-slate-200 rounded-lg p-2 bg-slate-50 focus:outline-none">
+                        </div>
+
+                        <button type="submit" class="w-full py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-semibold transition-colors shadow-sm flex items-center justify-center gap-1.5">
+                            <i data-lucide="upload" class="w-4 h-4"></i> Upload & Trigger Pipeline
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Sample Data Loader Box -->
+                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <h3 class="text-sm font-bold text-slate-800 mb-2 flex items-center gap-1.5">
+                            <i data-lucide="database" class="w-4 h-4 text-blue-600"></i> Load Official Sample Datasets
+                        </h3>
+                        <p class="text-xs text-slate-500 leading-relaxed mb-4">
+                            Instantly populate the database with realistic sample operational data containing 15 products, 4 warehouses, 10 suppliers, and active purchase orders with varying delays and stockouts.
+                        </p>
+                    </div>
+
+                    <div class="space-y-3">
+                        <button id="load-sample-btn" class="w-full py-2.5 bg-slate-800 hover:bg-slate-900 text-white rounded-lg text-xs font-semibold transition-colors shadow-sm flex items-center justify-center gap-1.5">
+                            <i data-lucide="database" class="w-4 h-4"></i> Load Official Sample Dataset
+                        </button>
+                        <span class="text-[11px] text-slate-400 block text-center">Overwrites existing staging data with standard benchmark data</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIEW: SETTINGS -->
+        <div id="view-settings" class="hidden space-y-6">
+            <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm max-w-2xl">
+                <h3 class="text-sm font-bold text-slate-800 mb-3 flex items-center gap-1.5">
+                    <i data-lucide="key" class="w-4 h-4 text-blue-600"></i> Gemini API Key Configuration
+                </h3>
+                <p class="text-xs text-slate-500 leading-relaxed mb-4">
+                    Supply your Google Gemini API Key to enable live Gemini 1.5 Flash multimodal reasoning. If left blank, the application automatically uses the built-in deterministic heuristic AI engine.
+                </p>
+
+                <div class="space-y-3">
+                    <input id="gemini-api-key-input" type="password" placeholder="Enter GEMINI_API_KEY..." class="w-full text-xs border border-slate-200 rounded-lg p-2.5 bg-slate-50 focus:outline-none focus:ring-1 focus:ring-blue-500">
+                    <button id="save-api-key-btn" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-lg transition-colors">
+                        Save API Key
+                    </button>
+                    <span id="api-key-status" class="hidden"></span>
+                </div>
+
+                <div class="mt-6 pt-4 border-t border-slate-100">
+                    <h4 class="text-xs font-bold text-slate-700 mb-1">Architecture & Guardrails</h4>
+                    <p class="text-xs text-slate-500 leading-relaxed">
+                        Deterministic calculations (low stock, lead-time variance, 7-day forecast) are performed strictly via Python/Pandas. The GenAI layer is grounded strictly on computed data structures.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-3.5 px-6 text-center text-xs text-slate-400">
+        Supply Chain Exception Intelligence Assistant &bull; Kongu Engineering College GenAI Industry Project
+    </footer>
+
+    <!-- Scripts -->
+    <script src="/static/app.js"></script>
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>
